@@ -1,6 +1,5 @@
 services:
   yt-dlp-bot:
-    image: lifailon/yt-dlp-bot:latest
     container_name: yt-dlp-bot
     restart: unless-stopped
     build:
