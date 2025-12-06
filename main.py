@@ -17,7 +17,7 @@ last_edited = {}
 
 def youtube_url_validation(url):
     youtube_regex = (
-        r'(https?://)?(www\.)?'
+        r'(https?://)?(www\.|m\.)?'
         r'(youtube|youtu|youtube-nocookie)\.(com|be)/'
         r'(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
 
