@@ -17,7 +17,7 @@ last_edited = {}
 
 def youtube_url_validation(url):
     youtube_regex = (
-        r'(https?://)?(www\.)?'
+        r'(https?://)?(www\.|m\.)?'
         r'(youtube|youtu|youtube-nocookie)\.(com|be)/'
         r'(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
 
@@ -27,16 +27,48 @@ def youtube_url_validation(url):
 
     return youtube_regex_match
 
+def is_allowed_domain(url):
+    """
+    Check if URL belongs to allowed domains: YouTube, TikTok, Instagram, Twitter/X
+    """
+    allowed_domains = [
+        # YouTube
+        'youtube.com', 'www.youtube.com', 'youtu.be', 'm.youtube.com', 'youtube-nocookie.com',
+        # TikTok
+        'tiktok.com', 'www.tiktok.com', 'vm.tiktok.com', 'vt.tiktok.com',
+        # Instagram
+        'instagram.com', 'www.instagram.com',
+        # Twitter/X
+        'twitter.com', 'www.twitter.com', 'x.com', 'www.x.com'
+    ]
+    
+    try:
+        parsed_url = urlparse(url)
+        domain = parsed_url.netloc.lower()
+        
+        # Remove port if present
+        if ':' in domain:
+            domain = domain.split(':')[0]
+        
+        return domain in allowed_domains
+    except (ValueError, AttributeError):
+        return False
+
 @bot.message_handler(commands=['start', 'help'])
 def test(message):
     bot.reply_to(
-        message, "*Send me a video link* and I'll download it for you, works with *YouTube*, *Twitter*, *TikTok*, *Reddit* and more.\n\n_Powered by_ [yt-dlp](https://github.com/yt-dlp/yt-dlp/)", parse_mode="MARKDOWN", disable_web_page_preview=True)
+        message, "*Send me a video link* and I'll download it for you, works with *YouTube*, *TikTok*, *Instagram* and *Twitter (X)*.\n\n_Powered by_ [yt-dlp](https://github.com/yt-dlp/yt-dlp/)", parse_mode="MARKDOWN", disable_web_page_preview=True)
 
 
 def download_video(message, url, audio=False, format_id="mp4"):
     url_info = urlparse(url)
     if url_info.scheme:
-        if url_info.netloc in ['www.youtube.com', 'youtu.be', 'youtube.com', 'youtu.be']:
+        # Check if URL is from allowed domains
+        if not is_allowed_domain(url):
+            bot.reply_to(message, 'Invalid URL. Only YouTube, TikTok, Instagram, and Twitter/X links are supported.')
+            return
+        
+        if url_info.netloc in ['www.youtube.com', 'youtube.com', 'youtu.be', 'm.youtube.com', 'youtube-nocookie.com']:
             if not youtube_url_validation(url):
                 bot.reply_to(message, 'Invalid URL')
                 return
