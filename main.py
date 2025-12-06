@@ -51,7 +51,7 @@ def is_allowed_domain(url):
             domain = domain.split(':')[0]
         
         return domain in allowed_domains
-    except:
+    except (ValueError, AttributeError):
         return False
 
 @bot.message_handler(commands=['start', 'help'])
@@ -68,7 +68,7 @@ def download_video(message, url, audio=False, format_id="mp4"):
             bot.reply_to(message, 'Invalid URL. Only YouTube, TikTok, Instagram, and Twitter/X links are supported.')
             return
         
-        if url_info.netloc in ['www.youtube.com', 'youtu.be', 'youtube.com', 'youtu.be']:
+        if url_info.netloc in ['www.youtube.com', 'youtube.com', 'youtu.be', 'm.youtube.com', 'youtube-nocookie.com']:
             if not youtube_url_validation(url):
                 bot.reply_to(message, 'Invalid URL')
                 return
