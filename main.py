@@ -12,7 +12,6 @@ import time
 bot = telebot.TeleBot(config.token)
 last_edited = {}
 
-
 def youtube_url_validation(url):
     youtube_regex = (
         r'(https?://)?(www\.)?'
@@ -25,12 +24,10 @@ def youtube_url_validation(url):
 
     return youtube_regex_match
 
-
 @bot.message_handler(commands=['start', 'help'])
 def test(message):
     bot.reply_to(
         message, "*Send me a video link* and I'll download it for you, works with *YouTube*, *Twitter*, *TikTok*, *Reddit* and more.\n\n_Powered by_ [yt-dlp](https://github.com/yt-dlp/yt-dlp/)", parse_mode="MARKDOWN", disable_web_page_preview=True)
-
 
 def download_video(message, url, audio=False, format_id="mp4"):
     url_info = urlparse(url)
@@ -102,7 +99,6 @@ def download_video(message, url, audio=False, format_id="mp4"):
     else: 
         bot.reply_to(message, 'Invalid URL')
 
-
 def log(message, text: str, media: str):
     if config.logs:
         if message.chat.type == 'private':
@@ -113,7 +109,6 @@ def log(message, text: str, media: str):
         bot.send_message(
             config.logs, f"Download request ({media}) from @{message.from_user.username} ({message.from_user.id})\n\n{chat_info}\n\n{text}")
 
-
 def get_text(message):
     if len(message.text.split(' ')) < 2:
         if message.reply_to_message and message.reply_to_message.text:
@@ -123,7 +118,6 @@ def get_text(message):
             return None
     else:
         return message.text.split(' ')[1]
-
 
 @bot.message_handler(commands=['download'])
 def download_command(message):
@@ -147,7 +141,6 @@ def download_audio_command(message):
 
     log(message, text, 'audio')
     download_video(message, text, True)
-
 
 @bot.message_handler(commands=['custom'])
 def custom(message):
@@ -181,7 +174,6 @@ def callback(call):
     else:
         bot.answer_callback_query(call.id, "You didn't send the request")
 
-
 @bot.message_handler(func=lambda m: True, content_types=["text", "pinned_message", "photo", "audio", "video", "location", "contact", "voice", "document"])
 def handle_private_messages(message):
     text = message.text if message.text else message.caption if message.caption else None
@@ -190,6 +182,5 @@ def handle_private_messages(message):
         log(message, text, 'video')
         download_video(message, text)
         return
-
 
 bot.infinity_polling()
