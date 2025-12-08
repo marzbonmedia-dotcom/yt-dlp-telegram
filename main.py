@@ -29,7 +29,7 @@ def youtube_url_validation(url):
 
 def is_allowed_domain(url):
     """
-    Check if URL belongs to allowed domains: YouTube, TikTok, Instagram, Twitter/X
+    Check if URL belongs to allowed domains: YouTube, TikTok, Instagram, Twitter/X, Bluesky
     """
     allowed_domains = [
         # YouTube
@@ -39,7 +39,9 @@ def is_allowed_domain(url):
         # Instagram
         'instagram.com', 'www.instagram.com',
         # Twitter/X
-        'twitter.com', 'www.twitter.com', 'x.com', 'www.x.com'
+        'twitter.com', 'www.twitter.com', 'x.com', 'www.x.com',
+        # Bluesky
+        'bsky.app', 'www.bsky.app'
     ]
     
     try:
@@ -57,7 +59,7 @@ def is_allowed_domain(url):
 @bot.message_handler(commands=['start', 'help'])
 def test(message):
     bot.reply_to(
-        message, "*Send me a video link* and I'll download it for you, works with *YouTube*, *TikTok*, *Instagram* and *Twitter (X)*.\n\n_Powered by_ [yt-dlp](https://github.com/yt-dlp/yt-dlp/)", parse_mode="MARKDOWN", disable_web_page_preview=True)
+        message, "*Send me a video link* and I'll download it for you, works with *YouTube*, *TikTok*, *Instagram*, *Twitter* and *Bluesky*.\n\n_Powered by_ [yt-dlp](https://github.com/yt-dlp/yt-dlp/)", parse_mode="MARKDOWN", disable_web_page_preview=True)
 
 
 def download_video(message, url, audio=False, format_id="mp4"):
@@ -65,7 +67,7 @@ def download_video(message, url, audio=False, format_id="mp4"):
     if url_info.scheme:
         # Check if URL is from allowed domains
         if not is_allowed_domain(url):
-            bot.reply_to(message, 'Invalid URL. Only YouTube, TikTok, Instagram, and Twitter/X links are supported.')
+            bot.reply_to(message, 'Invalid URL. Only YouTube, TikTok, Instagram, Twitter and Bluesky links are supported.')
             return
         
         if url_info.netloc in ['www.youtube.com', 'youtube.com', 'youtu.be', 'm.youtube.com', 'youtube-nocookie.com']:
